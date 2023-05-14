@@ -13,8 +13,10 @@ import Principal "mo:base/Principal";
 actor class StudentWall() {
   type Message = Type.Message;
   type Content = Type.Content;
+  stable var messageIdCount : Nat = 0;
   private func _hashNat(num : Nat) : Hash.Hash = return Text.hash(Nat.toText(num));
   let wall = HashMap.HashMap<Nat, Message>(0, Nat.equal, _hashNat);
+ 
   public shared ({ caller }) func writeMessage(c : Content) : async Nat {
     let id : Nat = messageIdCount;
     messageIdCount += 1;
@@ -44,7 +46,7 @@ actor class StudentWall() {
   public shared ({ caller }) func updateMessage(messageId : Nat, c : Content) : async Result.Result<(), Text> {
     var isAuth : Bool = not Principal.isAnonymous(caller);
     if (not isAuth) {
-      return #err "You must be authenticated to validate that you are the creator of the message!";
+      return #err "You must be authenticated to validate that you are the creator of the message";
     };
     let messageData : ?Message = wall.get(messageId);
     switch (messageData) {
@@ -53,7 +55,7 @@ actor class StudentWall() {
       };
       case (?message) {
         if (message.creator != caller) {
-          return #err "You are not the creator of this message!";
+          return #err "You are not the creator of this message";
         };
         let updatedMessage : Message = {
           creator = message.creator;
@@ -75,7 +77,7 @@ actor class StudentWall() {
       };
       case (?message) {
         if (message.creator != caller) {
-          return #err "You are not the creator of this message!";
+          return #err "You are not the creator of this message";
         };
         ignore wall.remove(messageId);
         return #ok();
@@ -139,14 +141,10 @@ actor class StudentWall() {
       messagesBuff.add(msg);
     };
     var messages = Buffer.toVarArray<Message>(messagesBuff);
-
-    //  Reverse buble sort
     var size = messages.size();
-
     if (size > 0) {
       size -= 1;
     };
-
     for (a in Iter.range(0, size)) {
       var maxIndex = a;
       for (b in Iter.range(a, size)) {

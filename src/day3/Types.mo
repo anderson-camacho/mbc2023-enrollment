@@ -1,9 +1,10 @@
 import Principal "mo:base/Principal";
+import Blob "mo:base/Blob";
 module {
   public type Content = {
     #Text : Text;
     #Image : Blob;
-    #Survey : Survey;
+    #Video : Blob;
   };
 
   public type Message = {
