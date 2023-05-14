@@ -1,8 +1,12 @@
 {
-   "canisters": {
-    "first_canister": {
-    "main": "main.mo",
-    "type": "motoko"
+  "canisters": {
+    "challenge": {
+      "main": "challenge/main.mo",
+      "type": "motoko"
+    },
+    "day1": {
+      "main": "day1/main.mo",
+      "type": "motoko"
+    }
   }
- }
 }
